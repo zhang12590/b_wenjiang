@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--<link rel="stylesheet/less" type="text/css" href="{{url_for('static',filename='src/css/queue.css',_external=True)}}" >-->
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        div {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            /* Firefox */
+        }
+        a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        a:link,
+        a:visited {
+            color: #f9fff6;
+        }
+        a:hover,
+        a:active {
+            color: #ff580e;
+        }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            position: relative;
+            font-size: 20px;
+        }
+        html .webTop,
+        body .webTop {
+            width: 100vw;
+            height: 50vh;
+            background: #009dff;
+        }
+        html .webTop .area,
+        body .webTop .area {
+            display: inline-block;
+            width: 50vw;
+            height: 50vh;
+            float: left;
+            border-bottom: 1vh solid #009dff;
+            color: white;
+        }
+        html .webTop .area .areaName,
+        body .webTop .area .areaName {
+            display: inline-block;
+            width: 25vw;
+            height: 50vh;
+            float: left;
+            font-size: 10vh;
+            text-align: center;
+        }
+        html .webTop .area .areaName .areaTextWarp,
+        body .webTop .area .areaName .areaTextWarp {
+            width: 25vw;
+            height: 50vh;
+            display: table;
+            text-align: center;
+        }
+        html .webTop .area .areaName .areaTextWarp .areaText,
+        body .webTop .area .areaName .areaTextWarp .areaText {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        html .webTop .area .windowNum,
+        body .webTop .area .windowNum {
+            display: inline-block;
+            width: 25vw;
+            height: 50vh;
+            float: right;
+            font-size: 32vh;
+            line-height: 50vh;
+            text-align: center;
+        }
+        html .webTop .theme,
+        body .webTop .theme {
+            display: inline-block;
+            width: 50vw;
+            height: 50vh;
+            background: #f9fff6;
+            float: right;
+            border-top-left-radius: 40vh;
+            border-bottom-left-radius: 6vh;
+            border-bottom: 1vh solid #009dff;
+        }
+        html .webTop .theme .themeName,
+        body .webTop .theme .themeName {
+            width: 35vw;
+            height: 35vh;
+            margin: 0 auto;
+            padding-top: 10vh;
+            text-align: center;
+            display: table;
+        }
+        html .webTop .theme .themeName .themeText,
+        body .webTop .theme .themeName .themeText {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 8vh;
+            font-weight: bold;
+            color: #009dff;
+        }
+        html .webTop .theme .themeNameEng,
+        body .webTop .theme .themeNameEng {
+            width: 40vw;
+            height: 15vh;
+            margin: 0 auto;
+        }
+        html .webTop .theme .themeNameEng .themeTextEngWarp,
+        body .webTop .theme .themeNameEng .themeTextEngWarp {
+            width: 40vw;
+            height: 15vh;
+            text-align: center;
+            display: table;
+        }
+        html .webTop .theme .themeNameEng .themeTextEngWarp .themeTextEng,
+        body .webTop .theme .themeNameEng .themeTextEngWarp .themeTextEng {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 2.3vh;
+            color: #009dff;
+        }
+        html .webBottom,
+        body .webBottom {
+            width: 100vw;
+            height: 50vh;
+            background: #f9fff6;
+        }
+        html .webBottom .curState,
+        body .webBottom .curState {
+            width: 50vw;
+            height: 50vh;
+            float: left;
+        }
+        html .webBottom .curState .stateTextWarp,
+        body .webBottom .curState .stateTextWarp {
+            width: 50vw;
+            height: 50vh;
+            text-align: center;
+            display: table;
+        }
+        html .webBottom .curState .stateTextWarp .stateText,
+        body .webBottom .curState .stateTextWarp .stateText {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 12vh;
+            color: #ff580e;
+        }
+        html .webBottom .waitPerson,
+        body .webBottom .waitPerson {
+            width: 50vw;
+            height: 50vh;
+            float: right;
+        }
+        html .webBottom .waitPerson .waitTextWarp,
+        body .webBottom .waitPerson .waitTextWarp {
+            width: 50vw;
+            height: 50vh;
+            text-align: center;
+            display: table;
+        }
+        html .webBottom .waitPerson .waitTextWarp .waitText,
+        body .webBottom .waitPerson .waitTextWarp .waitText {
+            display: table-cell;
+            vertical-align: middle;
+            font-size: 8vh;
+            color: #009dff;
+        }
+        #XJQueue .el-dialog__body{
+            padding-right: 50px;
+        }
+
+    </style>
+</head>
+<body>
+{% raw %}
+<div id="XJQueue" v-cloak>
+    <div class="webTop">
+        <div class="area">
+            <div class="areaName">
+                <div class="areaTextWarp">
+                    <div class="areaText">
+                        <span style="font-size: 10vh;">{{areaText}}</span></br>
+                        <span style="font-size: 6vh;">{{areaTextEng}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="windowNum">
+                {{windowNum}}
+            </div>
+        </div>
+        <div class="theme">
+            <div class="themeName">
+                <div class="themeText">{{themeText}}</div>
+            </div>
+            <div class="themeNameEng">
+                <div class="themeTextEngWarp">
+                    <div class="themeTextEng">
+                        {{themeTextEng}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="webBottom">
+        <div class="curState">
+            <div class="stateTextWarp">
+                <div class="stateText">
+                    <span>{{stateText}}</span></br>
+                    <span>{{stateTextEng}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="waitPerson">
+            <div class="curWait">
+                <div class="waitTextWarp">
+                    <div class="waitText">
+                        <span>{{waitTitle}}</span></br>
+                        <span style="font-size: 6vh;">{{waitTitleEng}}</span></br>
+                        <span style="font-size: 16vh;">{{waitNum}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <el-dialog
+            title="设置参数"
+            width="550px"
+            :visible.sync="dialogFormVisible"
+            :close-on-click-modal="clickM"
+            @close="closeDialog"
+            class="setDiaLog">
+        <el-form :model="form">
+            <el-form-item label="区域名" :label-width="formLabelWidth">
+                <el-input v-model="form.areaText" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="区域英文名" :label-width="formLabelWidth">
+                <el-input v-model="form.areaTextEng" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="窗口数" :label-width="formLabelWidth">
+                <el-input v-model="form.windowNum" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="主题名" :label-width="formLabelWidth">
+                <el-input v-model="form.themeText" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="主题英文名" :label-width="formLabelWidth">
+                <el-input v-model="form.themeTextEng" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="信令" :label-width="formLabelWidth">
+                <el-input v-model="form.lingpai" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="cancelFn">取 消</el-button>
+            <el-button type="primary" @click="sureFn">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+{% endraw %}
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import element JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+{% raw %}
+<script>
+    var XJWindowTop=new Vue({
+        el: '#XJQueue',
+
+        data: function() {
+            return {
+                areaText: '',
+                areaTextEng: '',
+                windowNum: '',
+
+                themeText: '',
+                themeTextEng: '',
+
+                stateText: '恭候您',
+                stateTextEng: 'Stand By',
+
+                waitTitle: '等待人数',
+                waitTitleEng: 'Waiting number',
+                waitNum: 0,
+
+                clickM: false,
+                fixedParameters: {},
+                dialogFormVisible: false,
+                form: {
+                    "lingpai": "123",
+                    "areaText": "一区",
+                    "areaTextEng": "Aera 1",
+                    "windowNum": "18",
+                    "themeText": "现场踏勘",
+                    "themeTextEng": "Site reconnaissance"
+                },
+                formLabelWidth: '120px'
+            }
+        },
+        created: function(){
+            if(localStorage.XJFixedParameters){
+                this.fixedParameters=JSON.parse(localStorage.XJFixedParameters);
+                this.form=JSON.parse(localStorage.XJFixedParameters);
+                this.areaText=this.fixedParameters.areaText;
+                this.areaTextEng=this.fixedParameters.areaTextEng;
+                this.windowNum=this.fixedParameters.windowNum;
+                this.themeText=this.fixedParameters.themeText;
+                this.themeTextEng=this.fixedParameters.themeTextEng;
+            }else{
+                let self = this
+                this.$alert('请设置浏览器参数', '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        // window.location.reload();
+                        self.dialogFormVisible = true
+                    }
+                });
+            }
+            _this=this;
+            namespace = '/test_conn';
+            var socket = io.connect('http://119.23.187.168:33333' + namespace);
+            socket.emit('request_for_response',{'param':'value'});
+            socket.on('server_response', function(res) {
+                console.log(res.data);
+                if(res.data.show=='true'){
+                    if(_this.fixedParameters.lingpai==res.data.lingpai) {
+                        _this.stateText = '办理中';
+                        _this.stateTextEng = res.data.number;
+                        _this.waitNum = res.data.length;
+                    }
+                    if(_this.themeText==res.data.subject){
+                        _this.waitNum = res.data.length;
+                    }
+                }else if(res.data.show=='false') {
+                    if (_this.fixedParameters.lingpai == res.data.lingpai){
+                        _this.stateText = '恭候您';
+                        _this.stateTextEng = 'Stand By';
+                        _this.waitNum = res.data.length;// 补充
+                    }
+                }else if(res.data.show=="stop"){
+                    console.log(1)
+                    if (_this.fixedParameters.lingpai == res.data.lingpai){
+                        _this.stateText = '暂停服务';
+                        _this.stateTextEng = 'Pause';
+                        // _this.waitNum = res.data.length;// 补充
+                    }
+                }else if(res.data.show=="start"){
+                    console.log(2)
+                    if (_this.fixedParameters.lingpai == res.data.lingpai){
+                        _this.stateText = '恭候您';
+                        _this.stateTextEng = 'Stand By';
+                        // _this.waitNum = res.data.length;// 补充
+                    }
+                }
+
+            });
+
+        },
+        computed :{
+        },
+        wacth: {
+            dialogFormVisible: function (val) {
+                this.dialogFormVisible = val
+                alert(this.dialogFormVisible)
+                if(!val){
+                    window.location.reload()
+                }
+            }
+        },
+        methods:{
+            cancelFn(){
+                this.dialogFormVisible = false
+                window.location.reload()
+            },
+            sureFn(){
+                let temp = this.form
+                if(temp.areaText !=='' && temp.areaTextEng !=='' && temp.windowNum !=='' && temp.themeText !=='' && temp.themeTextEng !=='' && temp.lingpai !=='') {
+                    // 发送请求
+                    let _this=this;
+                    let timer=setTimeout(function(){
+                      _this.notifyFn('提示', '请求超时')
+                    },10000);
+                    var curUlr="http://119.23.187.168:8000";
+                    let url=curUlr+"/add_lingpai";
+                    axios.post(url,{
+                        lingpai : this.form.lingpai,
+                        win : this.form.windowNum
+                    }).then(function(res) {
+                        // 清除超时请求
+                        clearTimeout(timer)
+                        console.log(res)
+                        if (res.data.errno === '0') { // 确定这返回的参数
+                          _this.notifyFn('提示', '参数设置成功', 'success')
+                            console.log(_this.form)
+                            localStorage. XJFixedParameters = JSON.stringify(_this.form)
+                            _this.dialogFormVisible = false
+                            window.location.reload()
+                        } else if (res.data.errno === '4001') {
+                          _this.notifyFn('提示', res.data.errmsg)
+                        } else {
+                          _this.notifyFn('提示', '设置参数失败')
+                        }
+                    }).catch(function(){
+                      _this.notifyFn('提示', '网络请求错误')
+                    });
+                }else{
+                  this.notifyFn('提示', '请补全信息')
+                }
+            },
+            closeDialog(){
+                this.dialogFormVisible = false
+                window.location.reload()
+            },
+          notifyFn (title, msg, type = 'warning') {
+            this.$notify({
+              title: title,
+              message: msg,
+              type: type,
+              dangerouslyUseHTMLString: true,
+              duration: 5000,
+              position: 'top-right'
+            })
+          },
+        }
+    })
+</script>
+{% endraw %}
+</html>

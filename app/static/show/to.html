@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="./src/js/axios.min.js"></script>
+
+    <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>-->
+    <style>
+        [v-cloak]{ display:none}
+        *{
+            margin: 0;
+            box-sizing:border-box;
+            -moz-box-sizing:border-box; /* Firefox */
+        }
+        html,body{
+            width: 100vw;
+            height: 100vh;
+        }
+        #XJQueue{
+            width: 100vw;
+            height: 100vh;
+        }
+        .left{
+            width: 60vw;
+            height: 100vh;
+            border-right: 3px solid black;
+            float: left;
+            background-size: 100% 100% !important;
+        }
+        .leftTitle{
+            height: 10vh;
+            line-height: 10vh;
+            padding-left:2vw;
+            font-size: 6vh;
+            font-weight: bold;
+            letter-spacing: 16px;
+        }
+        .leftTime{
+            height: 10vh;
+            line-height: 10vh;
+            padding-left:2vw;
+            font-size: 3vh;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 10vh;
+        }
+        .right{
+            width: 40vw;
+            height: 100vh;
+            float: right;
+        }
+        .rightTop{
+            width: 40vw;
+            height: 50vh;
+            border-bottom: 3px solid black;
+            background-size: 100% 100% !important;
+        }
+        .rightBottom{
+            width: 40vw;
+            height: 50vh;
+            background-size: 100% 100% !important;
+        }
+        .el-row{
+            padding-left: 2vw;
+            font-size: 20px;
+            text-align: center;
+        }
+        .el-col{
+            height: 6vh;
+            line-height: 6vh;
+            font-size: 2.5vh;
+            /*background: #c9c5c7;*/
+        }
+        .el-col .callNum,.el-col .callTo{
+            display: inline-block;
+            width: 100px;
+            text-align: center;
+            color: #fd7814;
+        }
+        .bgClass{
+            background: #c9c5c7;
+        }
+    </style>
+</head>
+<body>
+<div id="goWhere" v-cloak>
+    <div class="left" style="background: url('/static/show/src/images/showBg.jpg') no-repeat left top">
+        <div class="leftTitle">**政务中心</div>
+        <div class="leftTime"><span>大厅排队情况 </span><span>{{curData}}</span></div>
+        <div>
+            <el-row :gutter="20">
+                <el-col :span="12" v-for="(item,index) in curCallList" :class="{'bgClass' : (Math.ceil(item.order/2))%2===0}">
+                    <span>请</span>
+                    <span class="callNum">{{item.number}}</span>
+                    <span>到</span>
+                    <span class="callTo">{{item.window}}</span>
+                    <span>办理事项</span>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+    <div class="right">
+        <div class="rightTop" style="background: url('/static/show/src/images/toTop.jpg') no-repeat left top">
+
+        </div>
+        <div class="rightBottom" style="background: url('/static/show/src/images/toBottom.jpg') no-repeat left top"></div>
+    </div>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="./src/js/vue.min.js"></script>
+<!-- import element JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+
+    // 时间
+    function clockFn(){
+        var now = new Date();
+        var year = now.getFullYear(); //getFullYear getYear
+        var month = now.getMonth();
+        var date = now.getDate();
+        var day = now.getDay();
+        var hour = now.getHours();
+        var minu = now.getMinutes();
+        var sec = now.getSeconds();
+        var week;
+        month = month + 1;
+        if (month < 10) month = "0" + month;
+        if (date < 10) date = "0" + date;
+        if (hour < 10) hour = "0" + hour;
+        if (minu < 10) minu = "0" + minu;
+        if (sec < 10) sec = "0" + sec;
+        var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
+        week = arr_week[day];
+        var time = "";
+        time = year + "年" + month + "月" + date + "日 "+week+" " + hour + ":" + minu + ":" + sec;
+
+        return(time);
+    };
+    /**
+     * 获取对应名称的cookie
+     * @param name cookie的名称
+     * @returns {null} 不存在时，返回null
+     */
+    var getCookie = function (name) {
+        var arr;
+        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return arr[2];
+        else
+            return null;
+    };
+    const curUlr="http://119.23.187.168:8000";
+
+    var goWhere=new Vue({
+        el: '#goWhere',
+
+        data: function() {
+            return {
+                curData: clockFn(),
+                curCallList:[],
+
+            }
+        },
+        created: function(){
+            // 时间
+            let self=this;
+            let _this = this;
+            setInterval(function(){
+                self.curData=clockFn();
+            },1000);
+
+            //请求数据
+            // console.log(getCookie('addr'));
+            if(localStorage.addr){
+                let url=curUlr+"/current_call";
+                var tempFn=function(){
+                    axios.post(url,{
+                        work_addr : localStorage.addr
+                    }).then(function(res) {
+                        // clearTimeout(timer);// 清除超时请求
+                        if(res.status==200){
+                            let temp=res.data.data;
+                            console.log(res);
+                            let pageNum=Math.ceil(temp.length/14);
+                            if(pageNum<2){
+                                self.curCallList=temp.slice(0, 14);
+                            }else{
+                            }
+                        }
+                    }).catch(function (error) {
+                        _this.notifyFn('提示', '服务器错误')
+                        console.log(error);
+                    });
+                };
+                tempFn();
+                setInterval(function(){
+                    tempFn();
+                }, 1000 * 60 * 1);
+            }else{
+                // this.centerDialogVisible = true;
+                this.$alert('区域地址未选,点击确认按钮前往地址页面', '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        window.location.href='./toAddr.html';
+                    }
+                });
+            }
+            // var addr=localStorage.addr;
+            // namespace = '/voicecall';
+            // var socket = io.connect('//119.23.187.168:33333' + namespace);
+            // console.log(addr)
+            // socket.emit('request_for_response',{'param': addr});
+            // socket.on('server_response', function(res) {
+            //     console.log(res.data);
+            //
+            //
+            // });
+
+        },
+        computed :{
+
+        },
+        methods:{
+
+
+        }
+    });
+</script>
+</html>

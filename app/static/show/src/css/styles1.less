@@ -1,0 +1,383 @@
+[v-cloak]{ display:none}
+div{
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; /* Firefox */
+}
+
+a{
+    text-decoration:none;
+    color: #ffffff;
+}
+a:link, a:visited {
+    color: #f9fff6;
+}
+
+a:hover, a:active {
+    color: #ff580e;
+}
+html,body{
+    width:100%;
+    height:100%;
+    margin: 0;
+    position:relative;
+    font-size:20px;
+    background: rgb(225, 225, 225);
+    #XJList{
+        width:100vw;
+        height:100vh;
+
+        .webHeader{
+            height:10vh;
+            padding: 1vh 0 1vh 0;
+            .one-btn{
+                width: 40vw;
+                padding-left: 4vw;
+                float: left;
+                .home-btn,.back-btn{
+                    width:150px;
+                    height: 60px;
+                    text-align: center;
+                    border-radius: 30px;
+                    font-size: 30px;
+                }
+            }
+            .topTitle{
+                width: 60vw;
+                float: right;
+                overflow-y: hidden;
+                h3{
+                    font-size: 50px;
+                    line-height: 60px;
+                    margin:0;
+                    padding-right: 4vw;
+                    letter-spacing: 5px;
+                    text-align: right;
+                    font-family: 'Microsoft YaHei','SF Pro Display',Roboto,Noto,Arial,'PingFang SC',sans-serif;
+                }
+            }
+
+        }
+
+        .webContent{
+            width: 92vw;
+            height: 85vh;
+            margin: 0 auto;
+            border-radius: 12px;
+            background: rgb(255, 255, 255);
+            .webNav{
+                height: 10vh;
+                background: rgba(68, 153, 255, 0.75);
+                .curWay{
+                    height: 10vh;
+                    width: 240px;
+                    border-top-right-radius: 5vh;
+                    border-bottom-right-radius: 5vh;
+                    padding-left: 4vw;
+                    font-size: 26px;
+                    line-height: 10vh;
+                    letter-spacing: 5px;
+                    background: #334dff;
+                    color: #ffffff;
+                    float: left;
+                }
+                .curPos{
+                    width: 240px;
+                    height: 10vh;
+                    line-height: 10vh;
+                    font-size: 26px;
+                    text-align: center;
+                    letter-spacing: 8px;
+                    margin-left: 4vw;
+                    //background: #334dff;
+                    color: #ff580e;
+                    float: left;
+                    border-bottom: 3px solid #ff580e;
+                }
+            }
+            .groupBtn{
+                height: 60vh;
+                //background: rgb(220, 226, 217);
+                padding: 4vh 3vw 0 3vw;
+                position: relative;
+                .homeBtnToNext{
+                    position: absolute;
+                    top: 60%;left: 50%;
+                    margin-top: -50px;
+                    margin-left: -210px;
+                    .el-button{
+                        height: 10vh;
+                        width: 420px;
+                        font-size: 24px;
+                        padding:0;
+                        line-height: 10vh;
+                    }
+
+                }
+                .themeBtnToNext{
+                    .el-col{
+                        margin-bottom: 3vh;
+                        .el-button-group{
+                            height: 10vh;
+                            width: 100%;
+                            .el-button{
+                                height: 10vh;
+                                width: 100%;
+                                padding: 0px;
+                                font-size:24px;
+                                .themeName{
+                                    height:10vh;
+                                    width:70%;
+                                    float: left;
+                                    //text-align: center;
+                                    .themeNameTextWarp{
+                                        width: 100%;
+                                        height: 100%;
+                                        padding: 4px;
+                                        text-align: center;
+                                        display: table;
+                                        .themeNameText{
+                                            display: table-cell;
+                                            vertical-align: middle;
+                                            p{
+                                                word-wrap: break-word !important;
+                                                word-break: break-all !important;
+                                                white-space: normal !important;
+                                            }
+                                        }
+                                    }
+                                }
+                                .themeWait{
+                                    height:10vh;
+                                    width:25%;
+                                    float: right;
+                                    padding: 4px;
+                                    line-height: 10vh;
+                                    text-align: center;
+                                }
+                            }
+                        }
+                    }
+                }
+                .matterBtnToNext{
+                    .el-col{
+                        margin-bottom: 3vh;
+                        .el-button-group{
+                            height: 10vh;
+                            width: 100%;
+                            .el-button{
+                                height: 10vh;
+                                width: 100%;
+                                padding: 4px 8px 4px 8px;
+                                font-size:22px;
+                                line-height: 24px;
+                                p{
+                                    word-wrap: break-word !important;
+                                    word-break: break-all !important;
+                                    white-space: normal !important;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .registerForm{
+                    width: 36vw;
+                    padding-top: 20vh;
+                    margin: 0 auto;
+
+                    .formID,.formTel{
+                        position: relative;
+                        margin-bottom: 3vh;
+                        .el-input-group__prepend{
+                            width: 10vw;
+                            height: 8vh;
+                            text-align: center;
+                            font-size: 22px;
+                            font-weight: bolder;
+                            letter-spacing: 2px;
+                            color: rgba(0, 0, 0, 0.7);
+                            background-color: rgba(68, 153, 255, 0.75);
+                            border-color: rgba(68, 153, 255, 0.75);
+                        }
+                        .el-input__inner{
+                            width: 26vw;
+                            height: 8vh;
+                            font-size: 22px;
+                            //font-weight: bold;
+                            letter-spacing: 2px;
+                        }
+                        .errorTipID,.rightTipID,.errorTipTel,.rightTipTel{
+                            width: 160px;
+                            line-height: 40px;
+                            position: absolute;
+                            top: 50%;
+                            right: 0;
+                            margin-top: -20px;
+                            margin-right: -180px;
+                            font-size: 40px;
+                            font-weight: bolder;
+                        }
+                        .errorTipID,.errorTipTel{
+                            color: #ff580e;
+                        }
+                        .rightTipID,.rightTipTel{
+                            color: #05ff1e;
+                        }
+                    }
+
+                }
+            }
+            .webFooter{
+                height: 15vh;
+                .footerBtn{
+                    height: 10vh;
+                    .themeFooterBtn{
+                        .el-button{
+                            height:8vh;
+                            width:100%;
+                            font-size: 24px;
+                            padding:0;
+                            line-height:8vh;
+                        }
+                    }
+                }
+                .timeOut{
+                    height: 5vh;
+                    line-height: 5vh;
+                    padding-left: 2vw;
+                    color: #9b9b9b;
+                }
+            }
+
+
+        }
+
+        .homeDialogWarp{
+            .homeDialog{
+                //width: 100vw;
+                height: 100vh;
+                .el-dialog__header{
+                    width: 80vw;
+                    height: 10vh;
+                    background: rgba(68, 153, 255, 0.75);
+                    display: table-cell;
+                    vertical-align: middle;
+                    .el-dialog__title{
+                        font-size: 36px;
+                        font-weight: bolder;
+                        color: rgba(0, 0, 0, 0.91);
+                        letter-spacing: 8px;
+                    }
+                }
+                .el-dialog__body{
+                    padding: 6vh 10vw 0vh 10vw;
+                    .dialogImg{
+                        display: block;
+                        width: 40vw;
+                        height: 40vh;
+                        margin: 0 auto;
+                        background: #9b9b9b;
+                    }
+
+                }
+                .el-dialog__footer{
+                    padding-bottom: 6vh;
+                }
+                .dialog-footer{
+                    margin-top: 6vh;
+                    margin-bottom: 6vh;
+                    .el-button{
+                        font-size: 24px;
+                    }
+                }
+            }
+        }
+
+        .registerDialogWarp{
+            .registerDialog{
+                //width: 100vw;
+                //height: 100vh;
+                .el-dialog__header{
+                    width: 80vw;
+                    height: 10vh;
+                    background: rgba(68, 153, 255, 0.75);
+                    display: table-cell;
+                    vertical-align: middle;
+                    .el-dialog__title{
+                        font-size: 36px;
+                        font-weight: bolder;
+                        color: rgba(0, 0, 0, 0.91);
+                        letter-spacing: 8px;
+                    }
+                }
+                .el-dialog__body{
+                    padding: 3vh 20vw 0vh 20vw;
+                    .dialogImg{
+                        //display: block;
+                        width: 40vw;
+                        height: 40vh;
+                        margin: 0 auto;
+                        background: #9b9b9b;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        position: relative;
+                        .imgBG{
+                            //display: block;
+                            width: 20vw;
+                            height: 32vh;
+                            background-size:100% 100% !important;
+                            background-repeat:no-repeat !important;
+                        }
+                    }
+
+                }
+                .el-dialog__footer{
+                    padding-bottom: 6vh;
+                }
+                .dialog-footer{
+                    margin-bottom: 6vh;
+                    .el-button{
+                        font-size: 24px;
+                        line-height: 2;
+                    }
+                }
+            }
+        }
+        .didDialog{
+            .el-dialog__header{
+                width: 50vw;
+                height: 6vh;
+                background: rgba(68, 153, 255, 0.75);
+                display: table-cell;
+                vertical-align: middle;
+                .el-dialog__title{
+                    font-size: 26px;
+                    font-weight: bolder;
+                    color: rgba(0, 0, 0, 0.91);
+                    letter-spacing: 8px;
+                }
+            }
+            .el-dialog__footer{
+                text-align: center;
+            }
+        }
+
+
+
+
+
+    }
+}
+
+
+
+
+
+.warnCross{
+    color: #ff0d21;
+}
+.rightCheck{
+    color: #12ff42;
+}
+

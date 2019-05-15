@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>**政务中心排队系统</title>
+    <!-- import element-ui CSS -->
+    <!--<link rel="stylesheet" href="./src/css/element-ui.css">-->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--less-->
+    <link rel="stylesheet/less" type="text/css" href="./src/css/styles1.less" >
+    <!--<link rel="stylesheet/less" type="text/css" href="css/index.less" >-->
+    <script src="./src/js/less.js" type="text/javascript"></script>
+    <!-- jQuery -->
+    <!--<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>-->
+    <!--axios-->
+    <script src="./src/js/axios.min.js"></script>
+    <!--self css-->
+    <!--<link rel="stylesheet/less" type="text/css" href="css/styles1.less" >-->
+</head>
+<body>
+<div id="XJList"  v-cloak>
+    <div class="webHeader">
+        <el-row class="one-btn">
+            <el-button v-if="homeVisible" @click="homeBtnClick" type="primary" round class="home-btn" icon="el-icon-star-off">首页</el-button>
+            <el-button v-if="backVisible" @click="backBtnClick" type="warning" round class="back-btn" icon="el-icon-back">返回</el-button>
+        </el-row>
+        <el-row class="topTitle"><h3>{{Title}}</h3></el-row>
+    </div>
+
+    <div class="webContent">
+        <div class="webNav">
+            <div class="curWay">{{curWay}}</div>
+            <div class="curPos">{{curPos}}</div>
+        </div>
+        <div class="groupBtn">
+            <!--matterBtn-->
+            <el-row :gutter="30" class="matterBtnToNext" v-show="isAddr">
+                <el-col :xs="12" :sm="8" v-for="(item,index) in curAddrList">
+                    <el-button-group>
+                        <el-button :type="((item.name==curAddr) ? 'warning' : 'primary')" @click="addrBtnClick(item.name)">
+                            <div class="matterName">{{item.name}}</div>
+                        </el-button>
+                    </el-button-group>
+                </el-col>
+            </el-row>
+        </div>
+
+        <div class="webFooter">
+            <div class="footerBtn">
+                <!--matterFooter btn-->
+                <el-row :gutter="20" v-show="(addrList.length>12)" class="themeFooterBtn">
+                    <el-col :span="3" :offset="8">
+                        <el-button :type="((curPageNum==1)? 'info' : 'warning')" @click="leftList"><i class="el-icon-arrow-left el-icon--left"></i>上一页</el-button>
+                    </el-col>
+                    <el-col :span="3" :offset="2">
+                        <el-button :type="((curPageNum>=total)? 'info' : 'warning')" @click="rightList">下一页<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                    </el-col>
+                </el-row>
+            </div>
+            <div class="timeOut" v-show="timeShow">本页面将在<span style="color:rgb(255,67,68);">{{timeOut}}s</span>后返回首页</div>
+        </div>
+
+        <el-dialog
+                title="提示"
+                :visible.sync="loadAdderDialogVisible"
+                width="30%"
+                class="loadAdder"
+        >
+            <span>这是一段信息</span>
+            <span slot="footer" class="dialog-footer">
+                    <el-button v-if="false" @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="loadAdderDialogSure">确 定</el-button>
+                </span>
+        </el-dialog>
+
+    </div>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="./src/js/vue.min.js"></script>
+<!-- import element JavaScript -->
+<!--<script src="./src/js/element.min.js"></script>-->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    /**
+     * 获取对应名称的cookie
+     * @param name cookie的名称
+     * @returns {null} 不存在时，返回null
+     */
+    var getCookie = function (name) {
+        var arr;
+        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return arr[2];
+        else
+            return null;
+    };
+    const curUlr="http://119.23.187.168:8000";
+
+    var XJline=new Vue({
+        el: '#XJList',
+
+        data: function() {
+            return {
+                // title
+                homeLink: "/line/lineHome.html",
+                homeVisible: false,
+                backLink: "/line/lineTheme.html",
+                backVisible: false,
+                Title: "**政务中心排队系统",
+
+                // nav
+                curWay: "地址",
+                curPos: "请选择地址",
+
+                // addr
+                isAddr: true,
+                addrList: [],
+                curTheme: '',
+                curAddr: '',
+
+                curPageNum: 1,
+
+                // timeOut
+                timeShow: false,
+                timeOut: 60,
+
+                loadAdderDialogVisible: false,
+            }
+        },
+        created: function() {
+            let _this = this;
+            var timer=setTimeout(function(){
+                // _this.$alert('请求超时', '警告', {
+                //     confirmButtonText: '确定',
+                //     callback: action => {
+                //     }
+                // });
+                _this.notifyFn('提示', '请求超时')
+            },10000);
+
+            var url = curUlr+'/addr';
+            axios.get(url).then(function (result) {
+                clearTimeout(timer);// 清除超时请求
+                if(result.data.errno=='0'){
+                    console.log(result.data.data.addrs);
+                    _this.addrList=result.data.data.addrs;
+                }else{
+                    _this.notifyFn('提示', res.data.errmsg)
+                    // _this.loadAdderDialogVisible=true;
+                }
+            }).catch(function (error) {
+                _this.notifyFn('提示', '服务器错误')
+                console.log(error);
+            });
+            this.curAddr=localStorage.addr;
+        },
+        computed :{
+            total: function(){
+                return Math.ceil(this.addrList.length/12);
+            },
+            curAddrList: function(){
+                return this.addrList.slice((this.curPageNum-1)*12, (this.curPageNum-1)*12+12);
+            }
+        },
+        methods:{
+            loadAdderDialogSure: function(){
+                window.location.href='/line/lineAddr.html';
+            },
+            addrBtnClick: function(aa){
+                let _this = this;
+                localStorage.addr=aa;
+                document.cookie = "addr="+aa;
+
+                var timer=setTimeout(function(){
+                    // _this.$alert('请求超时', '警告', {
+                    //     confirmButtonText: '确定',
+                    //     callback: action => {
+                    //         window.location.href='/line/lineHome.html';
+                    //     }
+                    // });
+                    _this.notifyFn('提示', '请求超时')
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000)
+                },10000);
+                let url=curUlr+"/addr";
+                axios.post(url,{
+                    work_addr: aa
+                }).then(function(res) {
+                    clearTimeout(timer);// 清除超时请求
+                    if(res.status==200){
+                        if(res.data.errno==0){
+                            setTimeout(function(){
+                                window.location.href='/show/show.html';
+                            }, 500);
+                        }else{
+                            // _this.$alert('服务器错误', '警告', {
+                            //     confirmButtonText: '确定',
+                            //     callback: action => {
+                            //         window.location.reload();
+                            //         // window.location.href='/line/lineHome.html';
+                            //     }
+                            // });
+                            _this.notifyFn('提示', res.data.errmsg)
+                            // setTimeout(function(){
+                            //     window.location.reload();
+                            // }, 2000)
+                        }
+                    }
+                }).catch(function (error) {
+                    _this.notifyFn('提示', '服务器错误')
+                    console.log(error);
+                });
+
+            },
+            leftList: function(){
+                if(this.curPageNum <= 1){
+                    this.curPageNum = 1;
+                } else {
+                    this.curPageNum = this.curPageNum - 1;
+                }
+            },
+            rightList: function(){
+                if(this.curPageNum >= this.total){
+                    this.curPageNum = this.total;
+                } else {
+                    this.curPageNum = this.curPageNum + 1;
+                }
+            },
+            notifyFn (title, msg, type = 'warning') {
+                this.$notify({
+                    title: title,
+                    message: msg,
+                    type: type,
+                    dangerouslyUseHTMLString: true,
+                    duration: 5000,
+                    position: 'top-right'
+                })
+            }
+        }
+    });
+
+
+</script>
+</html>

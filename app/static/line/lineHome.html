@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>**政务中心排队系统</title>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--less-->
+    <link rel="stylesheet/less" type="text/css" href="./src/css/styles1.less" >
+    <!--<link rel="stylesheet/less" type="text/css" href="css/index.less" >-->
+    <script src="./src/js/less.min.js" type="text/javascript"></script>
+    <!--axios-->
+    <script src="./src/js/axios.min.js"></script>
+    <!--self css-->
+    <!--<link rel="stylesheet/less" type="text/css" href="css/styles1.less" >-->
+</head>
+<body>
+<div id="XJList" v-cloak>
+    <div class="webHeader">
+        <el-row class="one-btn">
+            <el-button v-if="homeVisible" @click="homeBtnClick" type="primary" round class="home-btn" icon="el-icon-star-off">首页</el-button>
+            <el-button v-if="backVisible" @click="backBtnClick" type="warning" round class="back-btn" icon="el-icon-back">返回</el-button>
+        </el-row>
+        <el-row class="topTitle"><h3>{{Title}}</h3></el-row>
+    </div>
+
+    <div class="webContent">
+        <div class="webNav">
+            <div class="curWay">{{curWay}}</div>
+            <div class="curPos">{{curPos}}</div>
+        </div>
+        <div class="groupBtn">
+            <!--homeBtn-->
+            <el-button-group class="homeBtnToNext" v-show="isHome">
+                <el-button type="primary" @click="lineClick">{{homeBtnName}}</el-button>
+            </el-button-group>
+        </div>
+
+        <div class="webFooter">
+            <div class="footerBtn">
+                <!--themeFooter btn-->
+                <!--<el-row :gutter="20" v-show="false" class="themeFooterBtn">-->
+                    <!--<el-col :span="3" :offset="8">-->
+                        <!--<el-button :type="((curPageNum==1)? 'info' : 'warning')" @click="leftList"><i class="el-icon-arrow-left el-icon&#45;&#45;left"></i>上一页</el-button>-->
+                    <!--</el-col>-->
+                    <!--<el-col :span="3" :offset="2">-->
+                        <!--<el-button :type="((curPageNum>=total)? 'info' : 'warning')" @click="rightList">下一页<i class="el-icon-arrow-right el-icon&#45;&#45;right"></i></el-button>-->
+                    <!--</el-col>-->
+                <!--</el-row>-->
+            </div>
+            <div class="timeOut" v-show="timeShow">本页面将在<span style="color:rgb(255,67,68);">{{timeOut}}s</span>后返回首页</div>
+        </div>
+
+    </div>
+
+    <!--<div class="homeDialogWarp">-->
+        <!--<el-dialog-->
+                <!--title="请前往地址页面选择地址"-->
+                <!--:visible.sync="centerDialogVisible"-->
+
+                <!--:show-close="showClose"-->
+                <!--:close-on-click-modal="closeOnClickModal"-->
+                <!--center-->
+                <!--class="homeDialog"-->
+        <!--&gt;-->
+            <!--&lt;!&ndash;<span>需要注意的是内容是默认不居中的</span>&ndash;&gt;-->
+            <!--<div style="text-align: center;font-size: 32px;font-weight: bold;color:rgba(0,0,0,0.8);margin-bottom: 6vh;">将前往选地址页面</div>-->
+            <!--<span slot="footer" class="dialog-footer">-->
+                <!--<el-button type="primary" @click="homeToAddr">确 认</el-button>-->
+                <!--&lt;!&ndash;centerDialogVisible = false&ndash;&gt;-->
+            <!--</span>-->
+        <!--</el-dialog>-->
+    <!--</div>-->
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="./src/js/vue.min.js"></script>
+<!-- import element JavaScript -->
+<!--<script src="./src/js/element.min.js"></script>-->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    /**
+     * 获取对应名称的cookie
+     * @param name cookie的名称
+     * @returns {null} 不存在时，返回null
+     */
+    var getCookie = function (name) {
+        var arr;
+        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return arr[2];
+        else
+            return null;
+    };
+    const curUlr="http://119.23.187.168:8000";
+
+    var XJline=new Vue({
+        el: '#XJList',
+
+        data: function() {
+            return {
+                // title
+                homeLink: "",
+                homeVisible: true,
+                backLink: "/line/index2.html",
+                backVisible: false,
+                Title: "**政务中心排队系统",
+
+                // nav
+                curWay: "现场取号",
+                curPos: "取号",
+
+                // content
+                // home
+                isHome: true,
+                homeBtnName: "排队取号",
+
+                // timeOut
+                timeShow: false,
+                timeOut: 60,
+
+                // dialog
+                centerDialogVisible: '',
+                showClose: false,
+                closeOnClickModal: false,
+
+            }
+        },
+        created: function(){
+            //请求数据
+            console.log(getCookie('addr'));
+            if(localStorage.addr){
+                // this.centerDialogVisible = false;
+            }else{
+                // this.centerDialogVisible = true;
+                this.$alert('区域地址未选,点击确认按钮前往地址页面', '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        window.location.href='/line/lineAddr.html';
+                    }
+                });
+            }
+
+        },
+        computed :{
+        },
+        methods:{
+            homeBtnClick: function(){
+                localStorage.XJLineTheme='';
+                localStorage.XJLineMatter='';
+                window.location.href='/line/lineHome.html';
+            },
+            lineClick: function(){
+                localStorage.XJLineTheme='';
+                localStorage.XJLineMatter='';
+                window.location.href='/line/lineTheme.html';
+            },
+            homeToAddr: function(){
+                this.centerDialogVisible = false;
+                window.location.href='/line/lineAddr.html';
+            }
+        }
+    })
+</script>
+</html>

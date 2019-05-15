@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="./src/js/axios.min.js"></script>
+    <script src="./src/js/echarts.min.js"></script>
+    <script src="./src/js/dataPs.js"></script>
+
+    <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>-->
+    <style>
+        [v-cloak]{ display:none}
+        *{
+            margin: 0;
+
+        }
+        div{
+            box-sizing:border-box;
+            -moz-box-sizing:border-box; /* Firefox */
+        }
+        html,body{
+            width: 100vw;
+            height: 100vh;
+            /*background: url(../images/signInBg.jpg) no-repeat left top;*/
+            background-size: 100% 100% !important;
+        }
+        #show{
+            width: 100vw;
+            height: 100vh;
+        }
+        .header{
+            width: 100vw;
+            min-height: 16vh;
+            padding: 6vh 2vw 0 2vw;
+            /*margin-top: 6vh;*/
+            line-height: 10vh;
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .webTime{
+            width: 100vw;
+            min-height: 6vh;
+            padding: 0 2vw 0 2vw;
+            line-height: 6vh;
+            font-size: 30px;
+            text-align: center;
+        }
+        .curD{
+            width: 100vw;
+            min-height: 6vh;
+            padding: 0 2vw 0 2vw;
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .sowingPlay{
+            width: 100vw;
+            height: 70vh;
+            padding: 2vh 8vw 4vh 8vw
+        }
+        .sowingPlay .dataWarp{
+            width: 84vw;
+            height: 62vh;
+            background: rgba(201, 197, 199, 0.43);
+        }
+        .sowingPlay .dataWarp .left,.sowingPlay .dataWarp .right{
+            width: 38vw;
+            height: 62vh;
+            padding: 2vw;
+
+        }
+        .sowingPlay .dataWarp .left{
+            float: left;
+        }
+        .sowingPlay .dataWarp .right{
+            float: right;
+        }
+        .itemTitle{
+            min-width: 8vh;
+            text-align: center;
+            font-size: 26px;
+            margin: 20px 0 20px 0;
+            font-weight: bold;
+        }
+        .tableTh{
+            text-align: right;
+        }
+        .rowClass{
+            font-size: 18px;
+            color: black;
+        }
+        .headerClass{
+            font-size: 20px;
+            color: black;
+            font-weight: bold;
+        }
+        .el-table th, .el-table tr {
+            font-size: 18px;
+             background-color: transparent!important;
+        }
+
+    </style>
+</head>
+<body style="background: url('./src/images/showBg.jpg') no-repeat left top">
+<div id="show" v-cloak>
+    <div class="header">
+        <span>**政务数据发布</span> <span style="font-size: 30px;"></span>
+    </div>
+    <div class="webTime">{{curDate}}</div>
+    <div class="curD">
+        <span>大厅取号总量：<span style="color:red;">{{allNumber}}</span>&nbsp; </span>
+        <span>今日取号量：<span style="color:red;">{{nowNumber}}</span>&nbsp; </span>
+        <span>当前等待人数：<span style="color:red;">{{nowWaitNumber}}</span></span>
+    </div>
+    <div class="sowingPlay">
+        <template>
+            <el-carousel
+                    indicator-position="none"
+                    arrow="never"
+                    class="dataWarp"
+                    :interval="intervalTime"
+            >
+                <el-carousel-item class="dataWarp">
+                    <div class="left" id="pic1"></div>
+                    <div class="right"  id="pic2"></div>
+                </el-carousel-item>
+                <el-carousel-item class="dataWarp">
+                    <div class="left" id="pic3"></div>
+                    <div class="right"  id="pic4"></div>
+                </el-carousel-item>
+                <el-carousel-item class="dataWarp">
+                    <div class="left" id="pic5"></div>
+                    <div class="right"  id="pic6"></div>
+                </el-carousel-item>
+                <el-carousel-item class="dataWarp">
+                    <div class="itemTitle">当日事项 Top 10</div>
+                    <el-table
+                            :data="tableData"
+                            border
+                            :header-row-class-name="headerClass"
+                            :row-class-name="rowClass"
+                            style="width: 80%;margin: 0 auto;background: transparent;">
+                        <el-table-column
+                                prop="matter"
+                                label="事 项"
+                               >
+                        </el-table-column>
+                        <el-table-column
+                                prop="peoperNum"
+                                label="件 数"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="per"
+                                width="180"
+                                label="占 比">
+                        </el-table-column>
+                    </el-table>
+                </el-carousel-item>
+            </el-carousel>
+
+        </template>
+
+    </div>
+
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="./src/js/vue.min.js"></script>
+<!-- import element JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+
+    // 时间
+    function clockFn(){
+        var now = new Date();
+        var year = now.getFullYear(); //getFullYear getYear
+        var month = now.getMonth();
+        var date = now.getDate();
+        var day = now.getDay();
+        var hour = now.getHours();
+        var minu = now.getMinutes();
+        var sec = now.getSeconds();
+        var week;
+        month = month + 1;
+        if (month < 10) month = "0" + month;
+        if (date < 10) date = "0" + date;
+        if (hour < 10) hour = "0" + hour;
+        if (minu < 10) minu = "0" + minu;
+        if (sec < 10) sec = "0" + sec;
+        var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
+        week = arr_week[day];
+        var time = "";
+        time = year + "年" + month + "月" + date + "日 "+week+" " + hour + ":" + minu + ":" + sec;
+
+        return(time);
+    };
+
+    /**
+     * 获取对应名称的cookie
+     * @param name cookie的名称
+     * @returns {null} 不存在时，返回null
+     */
+    var getCookie = function (name) {
+        var arr;
+        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return arr[2];
+        else
+            return null;
+    };
+    const curUlr="http://119.23.187.168:8000";
+
+    var show=new Vue({
+        el: '#show',
+
+        data: function() {
+            return {
+                curDate: clockFn(),
+                allNumber: 0,
+                nowNumber: 0,
+                nowWaitNumber: 0,
+
+                intervalTime: 10000,
+
+                tableData:[],
+                rowClass: 'rowClass',
+                headerClass: 'headerClass'
+
+            }
+        },
+        created: function(){
+            //请求数据
+            let self=this;
+            let _this = this;
+            // console.log(getCookie('addr'));
+            if(localStorage.addr){
+                // this.centerDialogVisible = false;
+            }else{
+                // this.centerDialogVisible = true;
+                this.$alert('区域地址未选,点击确认按钮前往地址页面', '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        window.location.href='./showAddr.html';
+                    }
+                });
+            }
+            // 时间
+            setInterval(function(){
+                self.curDate=clockFn();
+            },1000);
+
+            //请求数据
+        },
+        computed :{
+
+        },
+        mounted: function(){
+            let self =this;
+            let _this = this;
+            //请求数据
+            let url=curUlr+"/dataAnalysis";
+            // setInterval(function(){
+                axios.post(url,{
+                    work_addr : localStorage.addr
+                }).then(function(res) {
+                    // clearTimeout(timer);// 清除超时请求
+                    if(res.status==200){
+                        let temp=res.data.data;
+                        console.log(res);
+                        // 数据
+                        self.allNumber=temp.realData.Total;
+                        self.nowNumber=temp.realData.pickNum;
+                        self.nowWaitNumber=temp.realData.waitNum;
+                        // 绘图
+                        barAndLine1('pic1',temp.perWeek);
+                        barAndLine2('pic2',temp.timeSlot);
+                        bar3('pic3',temp.preTheme);
+                        Pie4('pic4',temp.theme);
+                        Pie5('pic5',temp.pieSeriesData2,'省内外访客');
+                        Pie6('pic6',temp.pieSeriesData,'各年龄段访客');
+
+                        self.tableData=temp.matterTop5.data.slice(0,10);
+                    }
+                }).catch(function (error) {
+                    _this.notifyFn('提示', '服务器错误')
+                    console.log(error);
+                });
+            // },1000*60*1);
+        },
+        methods:{
+            notifyFn (title, msg, type = 'warning') {
+                this.$notify({
+                    title: title,
+                    message: msg,
+                    type: type,
+                    dangerouslyUseHTMLString: true,
+                    duration: 5000,
+                    position: 'top-right'
+                })
+            }
+        }
+    });
+
+    window.onresize=function(){
+        window.location.reload();
+    };
+</script>
+</html>

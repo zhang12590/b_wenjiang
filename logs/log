@@ -1,0 +1,68 @@
+ERROR demo.py:407 'NoneType' object has no attribute 'timeout'
+ERROR item.py:96 '1'
+ERROR item.py:96 '现场探勘'
+DEBUG PngImagePlugin.py:139 STREAM b'IHDR' 16 13
+DEBUG PngImagePlugin.py:139 STREAM b'IDAT' 41 1216
+DEBUG PngImagePlugin.py:139 STREAM b'IHDR' 16 13
+DEBUG PngImagePlugin.py:139 STREAM b'IDAT' 41 1216
+INFO base.py:436 Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO base.py:878 Added job "job1" to job store "default"
+INFO base.py:162 Scheduler started
+DEBUG base.py:937 Looking for jobs to run
+DEBUG base.py:1017 Next wakeup is due at 2019-05-14 23:59:00+08:00 (in 29234.043572 seconds)
+ERROR glogging.py:219 Error processing request.
+Traceback (most recent call last):
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/workers/sync.py", line 92, in handle
+    req = six.next(parser)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/parser.py", line 39, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.req_count)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 152, in __init__
+    super(Request, self).__init__(cfg, unreader)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 49, in __init__
+    unused = self.parse(self.unreader)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 164, in parse
+    self.get_data(unreader, buf, stop=True)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 155, in get_data
+    data = unreader.read()
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/unreader.py", line 38, in read
+    d = self.chunk()
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+ConnectionResetError: [Errno 104] Connection reset by peer
+ERROR glogging.py:219 Error processing request.
+Traceback (most recent call last):
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/workers/sync.py", line 92, in handle
+    req = six.next(parser)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/parser.py", line 39, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.req_count)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 152, in __init__
+    super(Request, self).__init__(cfg, unreader)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 49, in __init__
+    unused = self.parse(self.unreader)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 164, in parse
+    self.get_data(unreader, buf, stop=True)
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/message.py", line 155, in get_data
+    data = unreader.read()
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/unreader.py", line 38, in read
+    d = self.chunk()
+  File "/root/environments/my_env/lib64/python3.6/site-packages/gunicorn/http/unreader.py", line 65, in chunk
+    return self.sock.recv(self.mxchunk)
+ConnectionResetError: [Errno 104] Connection reset by peer
+DEBUG base.py:937 Looking for jobs to run
+INFO base.py:123 Running job "job1 (trigger: cron[hour='23', minute='59'], next run at: 2019-05-14 23:59:00 CST)" (scheduled at 2019-05-14 23:59:00+08:00)
+DEBUG base.py:1017 Next wakeup is due at 2019-05-15 23:59:00+08:00 (in 86399.992614 seconds)
+INFO base.py:144 Job "job1 (trigger: cron[hour='23', minute='59'], next run at: 2019-05-15 23:59:00 CST)" executed successfully
+INFO base.py:436 Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO base.py:878 Added job "job1" to job store "default"
+INFO base.py:162 Scheduler started
+DEBUG base.py:937 Looking for jobs to run
+DEBUG base.py:1017 Next wakeup is due at 2019-05-15 23:59:00+08:00 (in 62389.057796 seconds)
+INFO glogging.py:213 Parent changed, shutting down: <Worker 11412>
+INFO glogging.py:213 Worker exiting (pid: 11412)
+INFO server.py:139 Server initialized for eventlet.
+INFO glogging.py:213 Parent changed, shutting down: <Worker 11308>
+INFO glogging.py:213 Worker exiting (pid: 11308)
+INFO glogging.py:213 Parent changed, shutting down: <Worker 5188>
+INFO glogging.py:213 Worker exiting (pid: 5188)
+INFO glogging.py:213 Parent changed, shutting down: <Worker 4885>
+INFO glogging.py:213 Worker exiting (pid: 4885)
